@@ -13,12 +13,14 @@ function logIssue(issue) {
     return `##vso[task.logissue ${attributes.join('')}]${issue.message}`;
 }
 
-module.exports = (results) => {
+module.exports = (results, options) => {
+    options = Object.assign({}, { severity: 'warning' }, options);
+
     const errorLines = _.chain(results)
                         .filter((result) => !result.isEmpty())
                         .flatMap((result) => _.chain(result.getErrorList())
                                               .map((error) => logIssue({
-                                                  type: 'warning',
+                                                  type: options.severity,
                                                   sourcepath: result.getFilename(),
                                                   linenumber: error.line,
                                                   columnnumber: error.column,

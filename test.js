@@ -86,13 +86,22 @@ test('Given results with no messages, logs nothing', (assert) => {
     assert.is(output.join('').trim(), '');
 });
 
-test('Given results with warnings, logs warnings', (assert) => {
+test('Given results with issues, logs warnings by default', (assert) => {
     const { restore, output, } = stdout.inspect();
 
     reporter(fixture);
 
     restore();
     assert.regex(output.join('').trim(), /##vso\[task\.logissue type=warning/);
+});
+
+test('Given results with issues, logs errors if specified', (assert) => {
+    const { restore, output, } = stdout.inspect();
+
+    reporter(fixture, { severity: 'error' });
+
+    restore();
+    assert.regex(output.join('').trim(), /##vso\[task\.logissue type=error/);
 });
 
 test('Given results with 5 issues, logs 5 issues in valid format', (assert) => {
